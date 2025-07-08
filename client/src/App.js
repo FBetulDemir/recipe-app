@@ -4,12 +4,14 @@ import Home from './pages/Home.js';
 import Auth from './pages/auth.js';
 import CreateRecipe from './pages/CreateRecipes.js';
 import SavedRecipes from './pages/SavedRecipes.js';
+import Navbar from './components/Navbar.js';
 
 
 function App() {
   return (
     <div className="App">
       <Router>
+        <Navbar/>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/auth" element={<Auth />} />
