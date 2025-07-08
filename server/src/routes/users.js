@@ -39,7 +39,7 @@ router.post("/login", async (req, res) => {
     }
 
     const token = jwt.sign({id: user._id}, "secret");
-    res.json({message: "Login successful", token, user: user.username});
+    res.json({message: "Login successful", token, userID: user._id, user: user.username});
 
 });
 

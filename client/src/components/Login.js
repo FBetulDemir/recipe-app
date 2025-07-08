@@ -19,6 +19,10 @@ const Login = () => {
                 username,
                 password,
             });
+
+            // const token = response.data.token;
+            // const userID = response.data.userID;
+            
             setCookies("access_token", response.data.token)
             window.localStorage.setItem("userID", response.data.userID);
             navigate("/")
