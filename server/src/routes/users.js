@@ -26,6 +26,21 @@ router.post("/register", async (req, res) => {
     res.json({message: "User registered successfully", user: newUser.username});
 })
 
-// router.post("/login");
+router.post("/login", async (req, res) => {
+    const {username, password} = req.body;
+    const user = await UserModel.findOne({username})
+    if (!user) {
+        return res.json({message: "User not found!"});
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+        return res.json({message: "Invalid password!"});
+    }
+
+    const token = jwt.sign({id: user._id}, "secret");
+    res.json({message: "Login successful", token, user: user.username});
+
+});
 
 export { router as userRouter};
