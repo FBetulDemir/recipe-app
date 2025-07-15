@@ -1,0 +1,6 @@
+.banner-content{
+    background-image: url("../assets/main-banner.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 70vh;
+}

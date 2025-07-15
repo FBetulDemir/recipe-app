@@ -1,0 +1,19 @@
+.navbar{
+    background-color: transparent;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 2px solid gray;
+    padding: 1em 1.5em;
+    box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+
+    *{
+        text-decoration: none;
+        color: rgb(51, 50, 50);
+        font-size: 1.5em;
+        font-weight: 500;
+    }
+}
+
+.navbar *:hover{
+    color: #817d7d
+}
