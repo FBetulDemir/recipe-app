@@ -44,7 +44,7 @@ const CreateRecipe = () => {
 
     return (
         <div className="create-recipe">
-            <h1>Create</h1>
+            <h1>Create a recipe to share!</h1>
             <form onSubmit={handleSubmit}>
                 <label htmlFor="name">Name: </label>
                 <input

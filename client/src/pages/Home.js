@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import MainBanner from "../components/MainBanner.js";
 import {useGetUserID} from "../hooks/useGetUserID.js";
 import '../styles/Home.css';
+import '../styles/SavedRecipes.css';
 
 const Home = () => {
     const [recipes, setRecipes] = useState([]);
@@ -56,7 +57,7 @@ const Home = () => {
             <div className="banner">
                 <MainBanner/>
             </div>
-            <h1>Welcome</h1>
+            <h1>Welcome to Herb & Heat</h1>
             <ul className="recipe-list">
                 {recipes.map((recipe) => (
                     <li key={recipe._id}>

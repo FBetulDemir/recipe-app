@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from 'axios';
 import {useNavigate} from "react-router-dom";
 import {useCookies} from "react-cookie";
+import '../styles/Login.css';
 
 const Login = () => {
 
@@ -57,7 +58,7 @@ const Login = () => {
                         required 
                     />
                 </div>
-                <button type="submit">Login</button>
+                <button type="submit" className="submit-btn">Login</button>
             </form>
         </div>
     )

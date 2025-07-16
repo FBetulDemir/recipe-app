@@ -1,5 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
+import '../styles/Register.css';
+
 
 const Register = () => {
     const [username, setUsername] = useState("");
@@ -23,6 +25,7 @@ const Register = () => {
     return (
         <div className="register-wrapper">
             <h1>Register</h1>
+            <p>Create a new user to save recipes!</p>
             <form>
                 <div className="form-group">
                     <label htmlFor="username">Username:</label>
@@ -44,7 +47,7 @@ const Register = () => {
                         required 
                     />
                 </div>
-                <button type="submit" onClick={handleSubmit }>Login</button>
+                <button type="submit" className="register-btn" onClick={handleSubmit }>Register</button>
             </form>
         </div>
     )
