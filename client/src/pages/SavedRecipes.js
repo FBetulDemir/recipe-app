@@ -23,6 +23,42 @@ const SavedRecipes = () => {
 
         fetchSavedRecipe();
     }, [userID]);
+
+    if (!userID) {
+        return (
+            <div className="saved-recipes">
+                <h1>Saved Recipes</h1>
+                <p>Please log in to view your saved recipes.</p>
+            </div>
+        );
+    }
+
+    if (userID && savedRecipes.length === 0) {
+        return (
+            <div className="saved-recipes">
+                <h1>Saved Recipes</h1>
+                <p>You did not save any recipes!</p>
+            </div>
+        );
+    }
+
+    const removeFromSaved = async (recipeID) => {
+        try {
+            const userID = window.localStorage.getItem("userID");
+            await axios.put("http://localhost:3001/recipes/unsave", {
+            recipeID,
+            userID,
+        });
+
+        setSavedRecipes(prev =>
+        prev.filter(recipe => recipe._id !== recipeID)
+        );
+        } catch (err) {
+            console.error("Failed to remove recipe:", err);
+        }
+    };
+
+
     return (
         <div className="saved-recipes">
             <h1>Saved Recipes</h1>
@@ -30,6 +66,9 @@ const SavedRecipes = () => {
                 {savedRecipes.map((recipe) => (
                     <li key={recipe._id}>
                         <div className="recipe-item">
+                            <button className="remove-btn" onClick={() => removeFromSaved(recipe._id)}>
+                                Remove from Saved
+                            </button>
                             <h2>{recipe.name}</h2>
                             <p>{recipe.instructions}</p>
                             <img src={recipe.imageUrl} alt={recipe.name}/>

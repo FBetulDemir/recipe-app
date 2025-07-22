@@ -3,6 +3,7 @@
   margin: 0 auto;
   padding: 2rem;
   line-height: 1.5;
+  text-align: center;
 }
 
 .saved-recipes h1 {
@@ -71,3 +72,20 @@
   font-size: 0.95rem;
   list-style: none;
 }
+
+
+.recipe-item .remove-btn {
+  background-color: #e07a5f;
+  color: #fff;
+  margin-top: 0.5rem;
+  border: 3px solid #000a02;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.recipe-item .remove-btn:hover {
+  background-color: #c9654e;
+}
+

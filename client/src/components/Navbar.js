@@ -27,7 +27,7 @@ const Navbar = () => {
         <Link to="/saved-recipes" className="link" onClick={() => setMenuOpen(false)}>Saved recipes</Link>
         <Link to="/register" className="link" onClick={() => setMenuOpen(false)}><button className="register-btn default-btn">Register</button></Link>
         {!cookies.access_token ? (
-          <Link to="/login" className="link default-btn" onClick={() => setMenuOpen(false)}>Login</Link>
+          <Link to="/login" className="default-btn" onClick={() => setMenuOpen(false)}>Login</Link>
         ) : (
           <button className="default-btn" onClick={() => { logout(); setMenuOpen(false); }}>Logout</button>
         )}

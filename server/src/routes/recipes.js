@@ -71,4 +71,22 @@ router.get("/savedRecipes/:userID", async (req, res) => {
 });
 
 
+router.put("/unsave", async (req, res) => {
+  const { recipeID, userID } = req.body;
+
+  try {
+    const user = await UserModel.findById(userID);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user.savedRecipes = user.savedRecipes.filter(id => id.toString() !== recipeID);
+    await user.save();
+
+    res.json({ savedRecipes: user.savedRecipes });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+
 export {router as recipesRouter};

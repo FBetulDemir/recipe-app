@@ -14,6 +14,11 @@
   margin-bottom: 1.5rem;
 }
 
+.create-recipe h2{
+  font-weight: 100;
+  font-size: medium;
+}
+
 .create-recipe form {
   display: flex;
   flex-direction: column;

@@ -31,6 +31,7 @@
 
 .link:hover {
   color: #817d7d;
+  text-decoration: underline;
 }
 
 
@@ -61,7 +62,7 @@
 }
 
 .default-btn{
-    background-color: #7BAF9E;;
+    background-color: #7BAF9E;
     color: #fff;
     border: 3px solid #000a02;
     padding: 1em 2em;
@@ -97,7 +98,7 @@
 }
 
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .nav-links {
     display: none;
     position: absolute;
