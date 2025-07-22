@@ -8,6 +8,7 @@ const Login = () => {
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
 
     const [, setCookies] = useCookies(["access_token"]);
 
@@ -15,28 +16,38 @@ const Login = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setError("");
+
         try {
             const response = await axios.post("http://localhost:3001/auth/login", {
                 username,
                 password,
             });
 
-            // const token = response.data.token;
-            // const userID = response.data.userID;
-            
-            setCookies("access_token", response.data.token)
-            window.localStorage.setItem("userID", response.data.userID);
-            navigate("/")
-            console.log("Login success:", response.data);
+            const { token, userID } = response.data;
+
+            if (token && userID) {
+                setCookies("access_token", token);
+                window.localStorage.setItem("userID", userID);
+                navigate("/");
+                console.log("Login success:", response.data);
+            } else {
+                setError("Invalid username or password.");
+            }
+
         } catch (err) {
-            console.error("Login failed:", err.response?.data || err.message);
-            alert("Login failed. Please check your credentials.");
+            if (err.response && err.response.data && err.response.data.message) {
+                setError(err.response.data.message);
+            } else {
+                setError("Login failed. Please check your credentials.");
+            }
         }
     };
 
     return (
         <div className="login-wrapper">
             <h1>Login</h1>
+            {error && <p className="error-message">{error}</p>}
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label htmlFor="username">Username:</label>
