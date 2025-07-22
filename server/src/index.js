@@ -20,4 +20,9 @@ app.use("/recipes", recipesRouter);
 
 mongoose.connect(process.env.MONGO_URI)
 
-app.listen(3001, () =>{"Server started!"})
+// app.listen(3001, () =>{"Server started!"})
+
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`Server started on port ${PORT}`);
+});
