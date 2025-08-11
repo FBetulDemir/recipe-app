@@ -11,7 +11,7 @@ const Register = () => {
         event.preventDefault();
         try {
             // await axios.post("http://localhost:3001/auth/register")
-            const response = await axios.post("http://localhost:3001/auth/register", {
+            const response = await axios.post("https://recipe-app-8t4e.onrender.com/auth/register", {
                 username,
                 password,
             });

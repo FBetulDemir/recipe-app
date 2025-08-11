@@ -19,7 +19,7 @@ const Login = () => {
         setError("");
 
         try {
-            const response = await axios.post("http://localhost:3001/auth/login", {
+            const response = await axios.post("https://recipe-app-8t4e.onrender.com/auth/login", {
                 username,
                 password,
             });
