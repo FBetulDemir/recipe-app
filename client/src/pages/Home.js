@@ -1,9 +1,11 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import MainBanner from "../components/MainBanner.js";
-import {useGetUserID} from "../hooks/useGetUserID.js";
+import { useGetUserID } from "../hooks/useGetUserID.js";
 import '../styles/Home.css';
 import '../styles/SavedRecipes.css';
+
+const API_BASE = "https://recipe-app-8t4e.onrender.com";
 
 const Home = () => {
     const [recipes, setRecipes] = useState([]);
@@ -13,49 +15,43 @@ const Home = () => {
     useEffect(() => {
         const fetchRecipe = async () => {
             try {
-                const response = await axios.get ("http://localhost:3001/recipes");
-                setRecipes(response.data)
-                console.log (response.data)
+                const response = await axios.get(`${API_BASE}/recipes`);
+                setRecipes(response.data);
+                console.log(response.data);
             } catch (error) {
-                console.error("Error fetching recipes:", error)
+                console.error("Error fetching recipes:", error);
             }
-        }
+        };
 
         const fetchSavedRecipe = async () => {
             try {
-                const response = await axios.get (`http://localhost:3001/recipes/savedRecipes/ids/${userID}`);
-                setSavedRecipes(response.data.savedRecipes)
-                // console.log (savedRecipes)
-                // console.log(userID)
+                const response = await axios.get(`${API_BASE}/recipes/savedRecipes/ids/${userID}`);
+                setSavedRecipes(response.data.savedRecipes);
             } catch (error) {
-                console.error("Error fetching recipes:", error)
+                console.error("Error fetching recipes:", error);
             }
-        }
+        };
 
         fetchRecipe();
         fetchSavedRecipe();
     }, [userID]);
 
-
-    const SaveRecipe = async(recipeID) => {
+    const SaveRecipe = async (recipeID) => {
         try {
-            const response = await axios.put("http://localhost:3001/recipes" ,{recipeID, userID});
+            const response = await axios.put(`${API_BASE}/recipes`, { recipeID, userID });
             setSavedRecipes(response.data.savedRecipes);
             console.log("Recipe saved successfully:", response.data.savedRecipes);
-
         } catch (error) {
-            console.error("Error saving recipe:" , error);
+            console.error("Error saving recipe:", error);
         }
-    }
+    };
 
     const isRecipeSaved = (id) => Array.isArray(savedRecipes) && savedRecipes.includes(id);
-
-
 
     return (
         <div className="home">
             <div className="banner">
-                <MainBanner/>
+                <MainBanner />
             </div>
             <h1>Welcome to Herb & Heat</h1>
             <ul className="recipe-list">
@@ -64,7 +60,7 @@ const Home = () => {
                         <div className="recipe-item">
                             <h2>{recipe.name}</h2>
                             {userID && (
-                                <button 
+                                <button
                                     onClick={() => SaveRecipe(recipe._id)}
                                     disabled={isRecipeSaved(recipe._id)}
                                 >
@@ -74,19 +70,16 @@ const Home = () => {
                             {!userID && (
                                 <button disabled>Login to Save</button>
                             )}
-
                             <p>{recipe.instructions}</p>
-                            <img src={recipe.imageUrl} alt={recipe.name}/>
+                            <img src={recipe.imageUrl} alt={recipe.name} />
                             <p>Cooking Time: {recipe.cookingTime} minutes</p>
                             <p>Ingredients: {recipe.ingredients.join(", ")}</p>
                         </div>
                     </li>
-                )
-                )}
+                ))}
             </ul>
         </div>
-        
-    )
-}
+    );
+};
 
-export default Home;
+export
