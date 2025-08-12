@@ -26,7 +26,7 @@ const Home = () => {
         const fetchSavedRecipe = async () => {
             try {
                 const response = await axios.get(`${API_BASE}/recipes/savedRecipes/ids/${userID}`);
-                setSavedRecipes(response.data.savedRecipes)
+                setSavedRecipes(Array.isArray(response.data.savedRecipes) ? response.data.savedRecipes : []);
                 // console.log (savedRecipes)
                 // console.log(userID)
             } catch (error) {
@@ -42,9 +42,13 @@ const Home = () => {
     const SaveRecipe = async(recipeID) => {
         try {
             const response = await axios.put(`${API_BASE}/recipes`, { recipeID, userID });
-            setRecipes(Array.isArray(response.data) ? response.data : []);
+            // Update savedRecipes if returned, or re-fetch
+            if (response.data.savedRecipes) {
+                setSavedRecipes(Array.isArray(response.data.savedRecipes) ? response.data.savedRecipes : []);
+            } else {
+                fetchSavedRecipe();
+            }
             console.log("Recipe saved successfully:", response.data.savedRecipes);
-
         } catch (error) {
             console.error("Error saving recipe:" , error);
         }

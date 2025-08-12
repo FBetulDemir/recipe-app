@@ -30,7 +30,7 @@ const Login = () => {
                 setCookies("access_token", token);
                 window.localStorage.setItem("userID", userID);
                 navigate("/");
-                console.log("Login success:", response.data);
+                // console.log("Login success:", response.data);
             } else {
                 setError("Invalid username or password.");
             }
