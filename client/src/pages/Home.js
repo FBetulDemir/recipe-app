@@ -39,23 +39,26 @@ const Home = () => {
     }, [userID]);
 
 
-    const SaveRecipe = async(recipeID) => {
+    const SaveRecipe = async (recipeID) => {
         try {
             const response = await axios.put(`${API_BASE}/recipes`, { recipeID, userID });
-            // Update savedRecipes if returned, or re-fetch
+
             if (response.data.savedRecipes) {
-                setSavedRecipes(Array.isArray(response.data.savedRecipes) ? response.data.savedRecipes : []);
-            } else {
-                fetchSavedRecipe();
+                // Update only savedRecipes state, not the main recipes list
+                setSavedRecipes(Array.isArray(response.data.savedRecipes) ? response.data.savedRecipes.map(String) : []);
             }
-            console.log("Recipe saved successfully:", response.data.savedRecipes);
+
+            // Re-fetch recipes
+            const recipeRes = await axios.get(`${API_BASE}/recipes`);
+            setRecipes(recipeRes.data);
+
         } catch (error) {
-            console.error("Error saving recipe:" , error);
+            console.error("Error saving recipe:", error);
         }
-    }
+    };
 
-    const isRecipeSaved = (id) => Array.isArray(savedRecipes) && savedRecipes.includes(id);
 
+    const isRecipeSaved = (id) => savedRecipes.includes(String(id));
 
 
     return (
