@@ -10,7 +10,6 @@ dotenv.config();
 
 const app = express();
 
-// CORS before everything
 app.use(
   cors({
     origin: 'https://herb-heat.netlify.app',
@@ -19,22 +18,17 @@ app.use(
     allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
-app.options('*', cors());
 
-// Body parser
 app.use(express.json());
 
-// Routes
 app.use('/auth', userRouter);
 app.use('/recipes', recipesRouter);
 
-// Health
 app.get('/', (_req, res) => res.json({ ok: true }));
 
-// DB + Server
 const MONGO_URI = process.env.MONGO_URI;
 if (!MONGO_URI) {
-  console.error('Missing MONGO_URI in environment variables');
+  console.error('Missing MONGO_URI');
   process.exit(1);
 }
 
