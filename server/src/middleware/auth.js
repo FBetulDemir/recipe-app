@@ -1,16 +1,17 @@
 import jwt from 'jsonwebtoken';
 
-export function verifyToken(req, res, next) {
-  const auth = req.headers.authorization || '';
-  const token = auth.startsWith('Bearer ') ? auth.slice(7) : null;
-
-  if (!token) return res.status(401).json({ message: 'No token provided' });
-
+export const verifyToken = (req, res, next) => {
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.userId = decoded.id; // match what you sign at login
+    const header = req.headers.authorization || '';
+    const token = header.startsWith('Bearer ') ? header.slice(7) : null;
+
+    if (!token) return res.status(401).json({ message: 'No token provided' });
+
+    const secret = process.env.JWT_SECRET || 'dev_secret_change_me';
+    const decoded = jwt.verify(token, secret);
+    req.userId = decoded.id;
     next();
   } catch (err) {
     return res.status(401).json({ message: 'Invalid or expired token' });
   }
-}
+};

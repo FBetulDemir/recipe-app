@@ -10,37 +10,42 @@ dotenv.config();
 
 const app = express();
 
-// CORS — allow Netlify + localhost (for development)
+// CORS before everything
 app.use(
   cors({
-    origin: ['https://herb-heat.netlify.app', 'http://localhost:5173', 'http://localhost:3000'],
+    origin: 'https://herb-heat.netlify.app',
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
+app.options('*', cors());
 
+// Body parser
 app.use(express.json());
 
-// Simple root route so Render won't show "Cannot GET /"
-app.get('/', (req, res) => {
-  res.send('Herb & Heat API is running 🌿🔥');
-});
-
-// Register your routes
+// Routes
 app.use('/auth', userRouter);
 app.use('/recipes', recipesRouter);
 
-// Connect to MongoDB and start server
-const PORT = process.env.PORT || 3001;
+// Health
+app.get('/', (_req, res) => res.json({ ok: true }));
+
+// DB + Server
+const MONGO_URI = process.env.MONGO_URI;
+if (!MONGO_URI) {
+  console.error('Missing MONGO_URI in environment variables');
+  process.exit(1);
+}
 
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(MONGO_URI)
   .then(() => {
     console.log('MongoDB connected');
-    app.listen(PORT, () => {
-      console.log(`Server started on port ${PORT}`);
-    });
+    const PORT = process.env.PORT || 3001;
+    app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
   })
   .catch((err) => {
-    console.error('MongoDB connection error:', err.message);
+    console.error('Mongo connection error:', err);
     process.exit(1);
   });

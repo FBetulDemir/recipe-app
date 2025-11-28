@@ -1,4 +1,3 @@
-// server/src/routes/recipes.js
 import express from 'express';
 import { RecipeModel } from '../models/Recipes.js';
 import { UserModel } from '../models/Users.js';
@@ -6,8 +5,8 @@ import { verifyToken } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// --- Public: list all recipes ---
-router.get('/', async (req, res) => {
+// Public: list all recipes
+router.get('/', async (_req, res) => {
   try {
     const recipes = await RecipeModel.find({});
     res.json(recipes);
@@ -16,7 +15,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// --- Protected: create a recipe (owner from token) ---
+// Protected: create recipe (owner from token)
 router.post('/', verifyToken, async (req, res) => {
   try {
     const recipe = new RecipeModel({ ...req.body, userOwner: req.userId });
@@ -27,14 +26,14 @@ router.post('/', verifyToken, async (req, res) => {
   }
 });
 
-// --- Protected: save a recipe for the logged-in user ---
+// Protected: save recipe for logged-in user
 router.put('/', verifyToken, async (req, res) => {
-  const { recipeID } = req.body;
-  const userID = req.userId; // <- from JWT
-
-  if (!recipeID) return res.status(400).json({ message: 'recipeID required' });
-
   try {
+    const { recipeID } = req.body;
+    const userID = req.userId;
+
+    if (!recipeID) return res.status(400).json({ message: 'recipeID required' });
+
     const user = await UserModel.findById(userID);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
@@ -42,25 +41,32 @@ router.put('/', verifyToken, async (req, res) => {
       user.savedRecipes.push(recipeID);
       await user.save();
     }
-    res.json({ savedRecipes: user.savedRecipes });
+
+    res.json({ savedRecipes: user.savedRecipes.map((id) => id.toString()) });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-// --- (Optional public) get saved IDs by user id param ---
-router.get('/savedRecipes/ids/:userID', async (req, res) => {
+// Protected: get saved IDs (prevents reading others' lists without token)
+router.get('/savedRecipes/ids/:userID', verifyToken, async (req, res) => {
   try {
+    if (req.userId !== req.params.userID) return res.status(403).json({ message: 'Forbidden' });
+
     const user = await UserModel.findById(req.params.userID);
-    res.json({ savedRecipes: user ? user.savedRecipes : [] });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    res.json({ savedRecipes: user.savedRecipes.map((id) => id.toString()) });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-// --- Public: expand saved IDs to full recipe docs ---
-router.get('/savedRecipes/:userID', async (req, res) => {
+// Protected: expand saved IDs to full docs (also restricted to self)
+router.get('/savedRecipes/:userID', verifyToken, async (req, res) => {
   try {
+    if (req.userId !== req.params.userID) return res.status(403).json({ message: 'Forbidden' });
+
     const user = await UserModel.findById(req.params.userID);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
@@ -71,20 +77,19 @@ router.get('/savedRecipes/:userID', async (req, res) => {
   }
 });
 
-// --- Protected: unsave a recipe for the logged-in user ---
+// Protected: unsave
 router.put('/unsave', verifyToken, async (req, res) => {
-  const { recipeID } = req.body;
-  const userID = req.userId; // <- from JWT
-
-  if (!recipeID) return res.status(400).json({ message: 'recipeID required' });
-
   try {
-    const user = await UserModel.findById(userID);
+    const { recipeID } = req.body;
+    if (!recipeID) return res.status(400).json({ message: 'recipeID required' });
+
+    const user = await UserModel.findById(req.userId);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
     user.savedRecipes = user.savedRecipes.filter((id) => id.toString() !== recipeID);
     await user.save();
-    res.json({ savedRecipes: user.savedRecipes });
+
+    res.json({ savedRecipes: user.savedRecipes.map((id) => id.toString()) });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

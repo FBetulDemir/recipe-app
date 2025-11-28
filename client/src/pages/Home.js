@@ -1,39 +1,34 @@
-import axios from 'axios';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useCookies } from 'react-cookie';
-import MainBanner from '../components/MainBanner.js';
-import { useGetUserID } from '../hooks/useGetUserID.js';
+import { api, API_BASE } from '../api';
+import MainBanner from '../components/MainBanner';
+import { useGetUserID } from '../hooks/useGetUserID';
 import '../styles/Home.css';
 import '../styles/SavedRecipes.css';
 
-const API_BASE = 'https://recipe-app-8t4e.onrender.com';
-
 const Home = () => {
   const [recipes, setRecipes] = useState([]);
-  const [savedRecipes, setSavedRecipes] = useState([]); // array of IDs
+  const [savedRecipes, setSavedRecipes] = useState([]); // array of IDs (strings)
   const [cookies] = useCookies(['access_token']);
   const userID = useGetUserID();
 
   const fetchRecipes = useCallback(async () => {
     try {
-      const { data } = await axios.get(`${API_BASE}/recipes`);
+      const { data } = await api.get('/recipes');
       setRecipes(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Error fetching recipes:', err);
     }
   }, []);
 
-  const fetchSavedRecipe = useCallback(async () => {
-    // If not logged in, clear and skip
+  const fetchSavedIDs = useCallback(async () => {
     if (!userID) {
       setSavedRecipes([]);
       return;
     }
     try {
-      const { data } = await axios.get(`${API_BASE}/recipes/savedRecipes/ids/${userID}`, {
-        headers: {
-          Authorization: `Bearer ${cookies.access_token || ''}`,
-        },
+      const { data } = await api.get(`/recipes/savedRecipes/ids/${userID}`, {
+        headers: { Authorization: `Bearer ${cookies.access_token || ''}` },
       });
       setSavedRecipes(Array.isArray(data?.savedRecipes) ? data.savedRecipes : []);
     } catch (err) {
@@ -44,26 +39,22 @@ const Home = () => {
 
   useEffect(() => {
     fetchRecipes();
-    fetchSavedRecipe();
-  }, [fetchRecipes, fetchSavedRecipe]);
+    fetchSavedIDs();
+  }, [fetchRecipes, fetchSavedIDs]);
 
   const saveRecipe = async (recipeID) => {
     try {
-      await axios.put(
-        `${API_BASE}/recipes`,
+      await api.put(
+        '/recipes',
         { recipeID },
-        {
-          headers: { Authorization: `Bearer ${cookies.access_token || ''}` },
-        }
+        { headers: { Authorization: `Bearer ${cookies.access_token || ''}` } }
       );
-      // refresh saved IDs so button state updates
-      await fetchSavedRecipe();
+      await fetchSavedIDs(); // refresh after save
     } catch (err) {
       console.error('Error saving recipe:', err);
     }
   };
 
-  // Make membership checks safe regardless of ObjectId/string
   const savedIdSet = useMemo(() => new Set(savedRecipes.map(String)), [savedRecipes]);
   const isRecipeSaved = (id) => savedIdSet.has(String(id));
 
